@@ -11,6 +11,8 @@
             [cbnews.routes.cljsexample :refer [cljs-routes]]
             [cbnews.crawler :as crawler]))
 
+(def crawler-thread (atom nil))
+
 (defroutes
   app-routes
   (route/resources "/")
@@ -34,7 +36,7 @@
     {:path "cbnews.log", :max-size (* 512 1024), :backlog 10})
   (if (env :dev) (parser/cache-off!))
 
-  (future (crawler/crawling))
+  (reset! crawler-thread (future (crawler/crawling)))
   (timbre/info "cbnews started successfully"))
 
 (defn destroy
