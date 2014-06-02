@@ -5,7 +5,9 @@
             [hickory.zip :refer [hickory-zip]]
             [hickory.select :as h-select]
             [clj-http.client :as http-client])
-  (:import [java.util UUID]))
+  (:import [java.util UUID]
+           [java.net URL URLConnection]
+           [java.io InputStreamReader BufferedReader]))
 
 (defn md->html
   "reads a markdown file from public/md and returns an HTML string"
@@ -14,9 +16,25 @@
     (io/slurp-resource filename)
     (md/md-to-html-string)))
 
-(defn crawl-cnbeta
-  []
-  (let [html-content (-> (http-client/get "http://www.cnbeta.com") :body parse as-hickory)
+(defn http-get [url]
+  (try
+    (let [conn (.openConnection ^URL (URL. url))]
+      #_(.setRequestProperty conn "accept" "*/*")
+      #_(.setRequestProperty conn "connection" "Keep-Alive")
+      #_(.setRequestProperty conn "user-agent" "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)")
+      (.setUseCaches ^URLConnection conn false)
+      (.connect ^URLConnection conn)
+      (let [in (BufferedReader. (InputStreamReader. (.getInputStream conn)))]
+        (loop [html "" line (.readLine in)]
+          (if (= line nil)
+            html
+            (recur (str html "\n" line) (.readLine in))))))
+    (catch Exception e
+      (.printStackTrace e))))
+
+(defn parse-cnbeta
+  [raw-html-content]
+  (let [html-content (-> raw-html-content parse as-hickory)
         realtime-content (h-select/select (h-select/descendant (h-select/class "realtime_list")
                                                                (h-select/tag :li))
                                           html-content)
@@ -45,3 +63,9 @@
 
 (defn uuid []
   (str (UUID/randomUUID)))
+
+(defn time2timestamp [time-str]
+  (try
+    (.getTime (.parse (java.text.SimpleDateFormat. "yyyy-MM-dd HH:mm:ss") time-str))
+    (catch Exception e
+      0)))

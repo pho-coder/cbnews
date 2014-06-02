@@ -18,7 +18,7 @@
    [selmer "0.6.6"]
    [lib-noir "0.8.2"]
    [hickory "0.5.3"]
-   [clj-http "0.9.1"]]
+   [clj-http "0.9.2"]]
   :cljsbuild
   {:builds
    [{:source-paths ["src-cljs"],
@@ -35,7 +35,7 @@
   {:uberjar {:aot :all},
    :production
    {:ring
-    {:open-browser? false, :stacktraces? false, :auto-reload? false}},
+    {:open-browser? false, :stacktraces? false, :auto-reload? true}},
    :dev
    {:dependencies [[ring-mock "0.1.5"] [ring/ring-devel "1.2.2"]],
     :env {:dev true}}}
