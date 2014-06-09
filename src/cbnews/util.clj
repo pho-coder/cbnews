@@ -42,6 +42,7 @@
                        {:sid (:data-sid (:attrs realtime-li))
                         :href (:href (:attrs (first (:content (nth (:content realtime-li) 3)))))
                         :title (first (:content (first (:content (nth (:content realtime-li) 3)))))
+                        :image (:original (:attrs (first (:content (second (:content (second (:content (nth (:content realtime-li) 5)))))))))
                         :brief (first (:content (nth (:content (nth (:content (second (:content (nth (:content realtime-li) 5)))) 3)) 3)))
                         :time (apply str (butlast (next (first (:content (first (:content (nth (:content (nth (:content (second (:content (nth (:content realtime-li) 5)))) 3)) 4))))))))})]
     #_(prn realtime-content)

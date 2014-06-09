@@ -4,7 +4,9 @@
 
 (deftest test-crawl-cnbeta
   (testing "testing crawl cnbeta"
-    (let [realtime-info (crawl-cnbeta)]
+    (let [raw-html-content (http-get "http://www.cnbeta.com")
+          realtime-info (parse-cnbeta raw-html-content)]
+      (println raw-html-content)
       (println realtime-info)
       (is (not (empty? realtime-info)))
       (is (= (count realtime-info) 12)))))
