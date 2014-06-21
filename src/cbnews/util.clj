@@ -4,7 +4,7 @@
             [hickory.core :refer [parse as-hickory]]
             [hickory.zip :refer [hickory-zip]]
             [hickory.select :as h-select]
-            [clj-http.client :as http-client])
+            [taoensso.timbre :as timbre])
   (:import [java.util UUID]
            [java.net URL URLConnection]
            [java.io InputStreamReader BufferedReader]))
@@ -19,9 +19,6 @@
 (defn http-get [url]
   (try
     (let [conn (.openConnection ^URL (URL. url))]
-      #_(.setRequestProperty conn "accept" "*/*")
-      #_(.setRequestProperty conn "connection" "Keep-Alive")
-      #_(.setRequestProperty conn "user-agent" "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)")
       (.setUseCaches ^URLConnection conn false)
       (.connect ^URLConnection conn)
       (let [in (BufferedReader. (InputStreamReader. (.getInputStream conn)))]
@@ -30,7 +27,9 @@
             html
             (recur (str html "\n" line) (.readLine in))))))
     (catch Exception e
-      (.printStackTrace e))))
+      (timbre/error "http get error!")
+      (timbre/error e)
+      nil)))
 
 (defn parse-cnbeta
   [raw-html-content]
