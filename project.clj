@@ -47,4 +47,5 @@
    [lein-cljsbuild "0.3.3"]]
   :description
   "FIXME: write description"
-  :min-lein-version "2.0.0")
+  :min-lein-version "2.0.0"
+  :global-vars {*warn-on-reflection* true})

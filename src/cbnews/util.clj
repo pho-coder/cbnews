@@ -7,7 +7,7 @@
             [taoensso.timbre :as timbre])
   (:import [java.util UUID]
            [java.net URL URLConnection]
-           [java.io InputStreamReader BufferedReader]))
+           [java.io InputStream InputStreamReader BufferedReader]))
 
 (defn md->html
   "reads a markdown file from public/md and returns an HTML string"
@@ -21,15 +21,21 @@
     (let [conn (.openConnection ^URL (URL. url))]
       (.setUseCaches ^URLConnection conn false)
       (.connect ^URLConnection conn)
-      (let [in (BufferedReader. (InputStreamReader. (.getInputStream conn)))]
+      (let [is ^InputStream (.getInputStream conn)
+            isr ^InputStreamReader (InputStreamReader. is)
+            in ^BufferedReader (BufferedReader. isr)]
         (loop [html "" line (.readLine in)]
           (if (= line nil)
             html
             (recur (str html "\n" line) (.readLine in))))))
+    (catch java.io.FileNotFoundException e
+      (timbre/error "http file not found error!")
+      (timbre/error (.getMessage e))
+      "")
     (catch Exception e
       (timbre/error "http get error!")
-      (timbre/error e)
-      nil)))
+      (timbre/error (.getMessage e))
+      "")))
 
 (defn parse-cnbeta
   [raw-html-content]

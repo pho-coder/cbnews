@@ -56,6 +56,6 @@
                                            (crawling)
                                            (throw-old-news 50)))
     (while true
-      (timbre/info @news-list)
-      (timbre/info (count @news-list))
+      (timbre/debug @news-list)
+      (timbre/debug (count @news-list))
       (Thread/sleep 30000))))
