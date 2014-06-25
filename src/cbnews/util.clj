@@ -6,7 +6,7 @@
             [hickory.select :as h-select]
             [taoensso.timbre :as timbre])
   (:import [java.util UUID]
-           [java.net URL URLConnection]
+           [java.net URL HttpURLConnection]
            [java.io InputStream InputStreamReader BufferedReader]))
 
 (defn md->html
@@ -19,20 +19,21 @@
 (defn http-get [url]
   (try
     (let [conn (.openConnection ^URL (URL. url))]
-      (.setUseCaches ^URLConnection conn false)
-      (.connect ^URLConnection conn)
-      (let [is ^InputStream (.getInputStream conn)
-            isr ^InputStreamReader (InputStreamReader. is)
-            in ^BufferedReader (BufferedReader. isr)]
+      (.setUseCaches ^HttpURLConnection conn false)
+      (.connect ^HttpURLConnection conn)
+      (with-open [is ^InputStream (.getInputStream conn)
+                  isr ^InputStreamReader (InputStreamReader. is)
+                  in ^BufferedReader (BufferedReader. isr)]
         (loop [html "" line (.readLine in)]
           (if (= line nil)
-            html
+            (do (.disconnect conn)
+                html)
             (recur (str html "\n" line) (.readLine in))))))
     (catch java.io.FileNotFoundException e
       (timbre/error "http file not found error!")
       (timbre/error (.getMessage e))
       "")
-    (catch Exception e
+    (catch Throwable e
       (timbre/error "http get error!")
       (timbre/error (.getMessage e))
       "")))

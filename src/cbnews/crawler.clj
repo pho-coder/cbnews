@@ -2,11 +2,13 @@
   (:require [taoensso.timbre :as timbre]
 
             [cbnews.util :as util]
-            [cbnews.timer :as timer]))
+            [cbnews.timer :as timer-util]))
 
 (def news-list (atom (list)))
 
 (def news-count-list (atom []))
+
+(def reset-timer-times (atom 0))
 
 (defn crawling []
   (let [raw-html-content (util/http-get "http://www.cnbeta.com")]
@@ -18,9 +20,6 @@
                                       (= (:sid %2) (:sid news-list-lastest)))
                                  false
                                  crawl-result)]
-        #_(timbre/debug crawl-result)
-        #_(timbre/debug news-list-lastest)
-        #_(timbre/debug "exists?" news-exists?)
         (reset! news-count-list (conj @news-count-list (count crawl-result)))
         (if news-exists?
           (let [index (loop [i 0]
@@ -28,8 +27,6 @@
                          (>= i (count crawl-result)) nil ;this case can't come out
                          (= (:sid news-list-lastest) (:sid (nth crawl-result i))) i
                          :else (recur (inc i))))]
-            #_(timbre/debug "index: " index)
-            #_(timbre/debug "add me: " (nthnext (reverse crawl-result) (- (count crawl-result) index)))
             (if (and index
                      (not= index 0)) ;this case means not new
               (reset! news-list (into @news-list (nthnext (reverse crawl-result) (- (count crawl-result) index))))))
@@ -51,11 +48,9 @@
 
 (defn run-me
   []
-  (let [timer (timer/mk-timer)]
-    (timer/schedule-recurring timer 5 10 (fn []
-                                           (crawling)
-                                           (throw-old-news 50)))
-    (while true
-      (timbre/debug @news-list)
-      (timbre/debug (count @news-list))
-      (Thread/sleep 30000))))
+  (while true
+    (timbre/debug @news-list)
+    (timbre/debug (count @news-list))
+    (Thread/sleep 30000)
+    (crawling)
+    (throw-old-news 50)))
