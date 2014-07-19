@@ -30,7 +30,7 @@
   {:handler cbnews.handler/app,
    :init cbnews.handler/init,
    :destroy cbnews.handler/destroy,
-   :servlet-path-info? false}
+   :servlet-path-info? true}
   :profiles
   {:uberjar {:aot :all},
    :production
