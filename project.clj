@@ -8,7 +8,7 @@
    [domina "1.0.2"]
    [environ "0.5.0"]
    [markdown-clj "0.9.43"]
-   [com.taoensso/timbre "3.1.6"]
+   [com.taoensso/timbre "3.2.1"]
    [prismatic/dommy "0.1.2"]
    [org.clojure/clojurescript "0.0-2138"]
    [org.clojure/clojure "1.6.0"]
