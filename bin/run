@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+export CBNEWS_HOME=~/workspace/clojure_workspace/cbnews
+nohup java -jar $CBNEWS_HOME/target/cbnews-0.1.0-SNAPSHOT-standalone.jar > /dev/null 2>&1&
