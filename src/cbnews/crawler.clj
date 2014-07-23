@@ -49,7 +49,7 @@
 (defn run-me
   []
   (while true
-    (timbre/debug @news-list)
+;;    (timbre/debug @news-list)
     (timbre/debug (count @news-list))
     (Thread/sleep 30000)
     (crawling)
