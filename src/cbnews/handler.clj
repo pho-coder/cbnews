@@ -31,7 +31,7 @@
      :fn rotor/appender-fn})
   (timbre/set-config!
     [:shared-appender-config :rotor]
-    {:path "cbnews.log", :max-size (* 512 1024), :backlog 100})
+    {:path "cbnews.log", :max-size (* 16 1024 1024), :backlog 50})
   (if (env :dev) (parser/cache-off!))
 
   (future (crawler/run-me))
