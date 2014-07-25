@@ -6,7 +6,7 @@
 
 (def news-list (atom (list)))
 
-(def news-count-list (atom []))
+;;(def news-count-list (atom []))
 
 (def reset-timer-times (atom 0))
 
@@ -20,7 +20,8 @@
                                       (= (:sid %2) (:sid news-list-lastest)))
                                  false
                                  crawl-result)]
-        (reset! news-count-list (conj @news-count-list (count crawl-result)))
+;;        (reset! news-count-list (conj @news-count-list (count crawl-result)))
+        (timbre/debug crawl-result)
         (if news-exists?
           (let [index (loop [i 0]
                         (cond

@@ -17,8 +17,8 @@
     (md/md-to-html-string)))
 
 (defn http-get [url]
+  (timbre/debug "start http get")
   (try
-    (timbre/debug "start http get")
     (let [conn (.openConnection ^URL (URL. url))]
       (.setUseCaches ^HttpURLConnection conn false)
       (.connect ^HttpURLConnection conn)
@@ -28,7 +28,6 @@
         (loop [html "" line (.readLine in)]
           (if (= line nil)
             (do (.disconnect conn)
-                (timbre/debug "end http get. html: " + html)
                 html)
             (recur (str html "\n" line) (.readLine in))))))
     (catch java.io.FileNotFoundException e
