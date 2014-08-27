@@ -19,5 +19,6 @@
 
   (GET "/all-news" []
        {:body @crawler/news-list})
-  (GET "/all-count" []
-       {:body @crawler/news-count-list}))
+;;  (GET "/all-count" []
+;;       {:body @crawler/news-count-list})
+)

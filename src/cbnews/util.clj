@@ -20,14 +20,20 @@
   (timbre/debug "start http get")
   (try
     (let [conn (.openConnection ^URL (URL. url))]
+      (timbre/debug "open http conn")
       (.setUseCaches ^HttpURLConnection conn false)
+      (.setConnectTimeout ^HttpURLConnection conn 5000)
+      (.setReadTimeout ^HttpURLConnection conn 5000)
       (.connect ^HttpURLConnection conn)
+      (timbre/debug "connect http conn")
       (with-open [is ^InputStream (.getInputStream conn)
                   isr ^InputStreamReader (InputStreamReader. is)
                   in ^BufferedReader (BufferedReader. isr)]
+        (timbre/debug "open http Reader!")
         (loop [html "" line (.readLine in)]
           (if (= line nil)
             (do (.disconnect conn)
+                (timbre/debug "disconnect http conn")
                 html)
             (recur (str html "\n" line) (.readLine in))))))
     (catch java.io.FileNotFoundException e
